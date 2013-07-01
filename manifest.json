@@ -1,0 +1,32 @@
+{
+	"manifest_version": 2,
+	
+	"name": "Regex Search",
+	"version": "0.1",
+
+	"permissions": [
+		"tabs", "http://*/*"
+	],
+
+	"content_scripts": [
+		{
+			"matches": ["http://*/*", "file:///*"],
+			"js": ["content.js"],
+			"css": ["style.css"]
+		}
+	],
+
+	"browser_action": {
+		"default_icon": {
+			"19": "icon19.png",
+			"38": "icon38.png"
+		},
+		"default_popup": "popup.html"
+	},
+
+	"icons": {
+		"16": "icon16.png",
+		"48": "icon48.png",
+		"128": "icon128.png"
+	}
+}
