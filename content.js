@@ -76,7 +76,7 @@ function displayCount() {
 	var s = document.createElement('span');
 	s.id = "_regexp_search_count";
 	s.appendChild(document.createTextNode(marks.length + ' matches found.'));
-	s.style.position = 'absolute';
+	s.style.position = 'fixed';
 	s.style.top = 0;
 	s.style.left = 0;
 	s.style.padding = '8px';
