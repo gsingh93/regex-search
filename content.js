@@ -6,6 +6,7 @@ chrome.runtime.onMessage.addListener(
 			var re = new RegExp(request.regexp, "g");
 			var html = document.getElementsByTagName('body')[0];
 			clear();
+			html.normalize();
 			recurse(html, re);
 			displayCount();
 		} else if (request.command == "clear") {
@@ -15,8 +16,7 @@ chrome.runtime.onMessage.addListener(
 		}
 	});
 
-function recurse(element, regexp)
-{
+function recurse(element, regexp) {
 	if (element.nodeName == "MARK") {
 		return;
 	}
