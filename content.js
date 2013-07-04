@@ -2,10 +2,17 @@ var marks = new Array();
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		var re = new RegExp(request.regexp, "g");
-		var html = document.getElementsByTagName('body')[0];
-		clear();
-		recurse(html, re);
+		if (request.command == "search") {
+			var re = new RegExp(request.regexp, "g");
+			var html = document.getElementsByTagName('body')[0];
+			clear();
+			recurse(html, re);
+			displayCount();
+		} else if (request.command == "clear") {
+			clear();
+		} else {
+			console.log("Regex search: Invalid command");
+		}
 	});
 
 function recurse(element, regexp)
@@ -58,4 +65,21 @@ function clear() {
 		var mark = marks[i];
 		mark.parentNode.replaceChild(mark.firstChild, mark);
 	}
+	marks.length = 0;
+	var s = document.getElementById("_regexp_search_count");
+	if (s != null) {
+		s.parentNode.removeChild(s);
+	}
+}
+
+function displayCount() {
+	var s = document.createElement('span');
+	s.id = "_regexp_search_count";
+	s.appendChild(document.createTextNode(marks.length + ' matches found.'));
+	s.style.position = 'absolute';
+	s.style.top = 0;
+	s.style.left = 0;
+	s.style.padding = '8px';
+	s.style.background = 'rgba(255, 255, 0, 0.5)';
+	document.getElementsByTagName('body')[0].appendChild(s);
 }
