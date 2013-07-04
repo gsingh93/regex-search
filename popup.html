@@ -1,7 +1,25 @@
 <html>
+  <style>
+	input {
+	  border:1px solid #aaa;
+	  box-shadow: 0px 0px 3px #ccc, 0 10px 15px #eee inset;
+	  border-radius:2px;
+	  height:27px;
+	  width:220px;
+	  padding: 3px;
+	}
+
+	input:focus {
+	  background: #fff;
+	  border:1px solid;
+	  border-color: #555;
+	  box-shadow: 0 0 3px #aaa;
+	  outline-style: none;
+	}
+  </style>
   <body>
 	<input type="text" id="query">
-	<button id="search">Search</button>
+	<div style="text-align: center"><button id="search">Search</button></div>
 	<script src="popup.js"></script>
   </body>
 </html>
