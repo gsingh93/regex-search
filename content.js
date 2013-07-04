@@ -20,13 +20,13 @@ function recurse(element, regexp)
 	if (element.nodeName == "MARK") {
 		return;
 	}
-    if (element.childNodes.length > 0) { 
-        for (var i = 0; i < element.childNodes.length; i++) {
+	if (element.childNodes.length > 0) { 
+		for (var i = 0; i < element.childNodes.length; i++) {
 			recurse(element.childNodes[i], regexp);
 		}
 	}
 
-    if (element.nodeType == Node.TEXT_NODE && element.nodeValue.trim() != '') {
+	if (element.nodeType == Node.TEXT_NODE && element.nodeValue.trim() != '') {
 		/*
 		 * 1. Find all regex matches
 		 * 2. Loop through matches, finding their starting positions
@@ -81,5 +81,11 @@ function displayCount() {
 	s.style.left = 0;
 	s.style.padding = '8px';
 	s.style.background = 'rgba(255, 255, 0, 0.5)';
+	s.addEventListener('mouseover', function(event) {
+		document.getElementById("_regexp_search_count").style.opacity = "0";
+	});
+	s.addEventListener('mouseout', function(event) {
+		document.getElementById("_regexp_search_count").style.opacity = "1";
+	});
 	document.getElementsByTagName('body')[0].appendChild(s);
 }
