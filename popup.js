@@ -13,11 +13,23 @@ document.getElementById("query").addEventListener("keydown", function(event) {
 function search() {
 	chrome.tabs.getSelected(null, function(tab) {
 		var el = document.getElementById("query");
-		if (el.value != "") {
+		console.log(validate(el.value));
+		if (validate(el.value)) {
+			el.className = '';
 			chrome.tabs.sendMessage(tab.id, {command: "search", regexp: el.value});
+		} else {
+			el.className = 'invalid';
 		}
 	});
 }
 
-
-
+function validate(regexp) {
+	if (regexp != "") {
+		try {
+			"".match(regexp);
+			return true;
+		} catch (e) {
+		}
+	}
+	return false;
+}
