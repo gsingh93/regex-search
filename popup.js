@@ -5,15 +5,17 @@ document.getElementById("clear").addEventListener("click", function(event) {
 });
 document.getElementById("search").addEventListener("click", search);
 document.getElementById("query").addEventListener("keydown", function(event) {
+	chrome.extension.getBackgroundPage().query = document.getElementById("query").value;
 	if (event.keyCode == 13) {
 		search();
 	}
 });
 
+document.getElementById("query").value = chrome.extension.getBackgroundPage().query;
+
 function search() {
 	chrome.tabs.getSelected(null, function(tab) {
 		var el = document.getElementById("query");
-		console.log(validate(el.value));
 		if (validate(el.value)) {
 			el.className = '';
 			chrome.tabs.sendMessage(tab.id, {command: "search", regexp: el.value});
