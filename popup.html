@@ -2,7 +2,7 @@
 <html>
   <head>
 	<style>
-	  input {
+	  input[type=text] {
 	    border:1px solid #aaa;
 	    box-shadow: 0px 0px 3px #ccc, 0 10px 15px #eee inset;
 	    border-radius:2px;
@@ -11,7 +11,7 @@
 	    padding: 3px;
 	  }
 
-	  input:focus {
+	  input:focus[type=text] {
 	    background: #fff;
 	    border:1px solid;
 	    border-color: #555;
@@ -32,6 +32,7 @@
 	  <button id="search">Search</button>
 	  <button id="clear">Clear</button>
 	  <button id="next">Next</button>
+	  Case Insensitive <input type="checkbox" id="case-insensitive">
 	</div>
 	<script src="popup.js"></script>
 	</div>

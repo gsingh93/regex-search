@@ -4,7 +4,11 @@ var cur = 0;
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if (request.command == "search") {
-			var re = new RegExp(request.regexp, "g");
+			var flags = "g";
+			if (request.caseInsensitive == true) {
+				var flags = "gi";
+			}
+			var re = new RegExp(request.regexp, flags);
 			var html = document.getElementsByTagName('body')[0];
 			clear();
 			html.normalize();

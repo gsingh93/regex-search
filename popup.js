@@ -23,7 +23,13 @@ function search() {
 		var el = document.getElementById("query");
 		if (validate(el.value)) {
 			el.className = '';
-			chrome.tabs.sendMessage(tab.id, {command: "search", regexp: el.value});
+			checkbox = document.getElementById("case-insensitive");
+			if (checkbox.checked) {
+				var insensitive = true;
+			} else {
+				var insensitive = false;
+			}
+			chrome.tabs.sendMessage(tab.id, {command: "search", caseInsensitive: insensitive, regexp: el.value});
 		} else {
 			el.className = 'invalid';
 		}
