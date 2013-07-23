@@ -1,6 +1,11 @@
-document.getElementById("clear").addEventListener("click", function(event) {
+document.getElementById("prev").addEventListener("click", function(event) {
 	chrome.tabs.getSelected(null, function(tab) {
-		chrome.tabs.sendMessage(tab.id, {command: "clear"});
+		chrome.tabs.sendMessage(tab.id, {command: "prev"});
+	});
+});
+document.getElementById("next").addEventListener("click", function(event) {
+	chrome.tabs.getSelected(null, function(tab) {
+		chrome.tabs.sendMessage(tab.id, {command: "next"});
 	});
 });
 document.getElementById("search").addEventListener("click", search);

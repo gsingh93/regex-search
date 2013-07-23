@@ -1,4 +1,5 @@
 var marks = new Array();
+var cur = 0;
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
@@ -11,9 +12,15 @@ chrome.runtime.onMessage.addListener(
 			displayCount();
 		} else if (request.command == "clear") {
 			clear();
+		} else if (request.command == "prev") {
+			moveToPrev();
+		} else if (request.command == "next") {
+			moveToNext();
 		} else {
 			console.log("Regex search: Invalid command");
 		}
+		marks[cur].className="__regexp_search_selected";
+		$('body').scrollTop($(marks[cur]).offset().top - 20);
 	});
 
 function recurse(element, regexp) {
@@ -36,7 +43,6 @@ function recurse(element, regexp) {
 		 */
 		var str = element.nodeValue;
 		var matches = str.match(regexp);
-		
 		var parent = element.parentNode;
 		if (matches != null) {
 			parent.removeChild(element);
@@ -61,6 +67,7 @@ function recurse(element, regexp) {
 }
 
 function clear() {
+	cur = 0;
 	for (var i = 0; i < marks.length; i++) {
 		var mark = marks[i];
 		mark.parentNode.replaceChild(mark.firstChild, mark);
@@ -88,4 +95,18 @@ function displayCount() {
 		document.getElementById("_regexp_search_count").style.opacity = "1";
 	});
 	document.getElementsByTagName('body')[0].appendChild(s);
+}
+
+function moveToNext() {
+	if (cur < marks.length - 1) {
+		marks[cur++].className="";
+		marks[cur].className="__regexp_search_selected";
+	}
+}
+
+function moveToPrev() {
+	if (cur > 0) {
+		marks[cur--].className="";
+		marks[cur].className="__regexp_search_selected";
+	}
 }
