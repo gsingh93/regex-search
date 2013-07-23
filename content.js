@@ -80,9 +80,10 @@ function clear() {
 }
 
 function displayCount() {
+	var num = cur + 1;
 	var s = document.createElement('span');
 	s.id = "_regexp_search_count";
-	s.appendChild(document.createTextNode(marks.length + ' matches found.'));
+	s.innerHTML = num + " of " + marks.length + " matches.";
 	s.style.position = 'fixed';
 	s.style.top = 0;
 	s.style.left = 0;
@@ -101,6 +102,7 @@ function moveToNext() {
 	if (cur < marks.length - 1) {
 		marks[cur++].className="";
 		marks[cur].className="__regexp_search_selected";
+		updatePosText();
 	}
 }
 
@@ -108,5 +110,14 @@ function moveToPrev() {
 	if (cur > 0) {
 		marks[cur--].className="";
 		marks[cur].className="__regexp_search_selected";
+		updatePosText();
+	}
+}
+
+function updatePosText() {
+	if (marks.length > 0) {
+		var elt = document.getElementById("_regexp_search_count");
+		var num = cur + 1;
+		elt.innerHTML = num + " of " + marks.length + " matches.";
 	}
 }
