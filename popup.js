@@ -9,6 +9,12 @@ document.getElementById("next").addEventListener("click", function(event) {
 	});
 });
 document.getElementById("search").addEventListener("click", search);
+document.getElementById("clear").addEventListener("click", function(event) {
+	chrome.tabs.getSelected(null, function(tab) {
+		chrome.tabs.sendMessage(tab.id, {command: "clear"});
+	});
+});
+
 document.getElementById("query").addEventListener("keydown", function(event) {
 	chrome.extension.getBackgroundPage().query = document.getElementById("query").value;
 	if (event.keyCode == 13) {
