@@ -25,7 +25,9 @@ chrome.runtime.onMessage.addListener(
 		}
 		if (marks.length > 0) {
 			marks[cur].className="__regexp_search_selected";
-			$('body').scrollTop($(marks[cur]).offset().top - 20);
+			if (!elementInViewport(marks[cur])) {
+				$('body').scrollTop($(marks[cur]).offset().top - 20);
+			}
 		}
 	});
 
@@ -137,3 +139,24 @@ function updatePosText() {
 		elt.innerHTML = num + " of " + marks.length + " matches.";
 	}
 }
+
+function elementInViewport(el) {
+	var top = el.offsetTop;
+	var left = el.offsetLeft;
+	var width = el.offsetWidth;
+	var height = el.offsetHeight;
+
+	while(el.offsetParent) {
+		el = el.offsetParent;
+		top += el.offsetTop;
+		left += el.offsetLeft;
+	}
+
+	return (
+    top >= window.pageYOffset &&
+    left >= window.pageXOffset &&
+			(top + height) <= (window.pageYOffset + window.innerHeight) &&
+			(left + width) <= (window.pageXOffset + window.innerWidth)
+	);
+}
+
