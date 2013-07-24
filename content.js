@@ -23,14 +23,23 @@ chrome.runtime.onMessage.addListener(
 		} else {
 			console.log("Regex search: Invalid command");
 		}
-		marks[cur].className="__regexp_search_selected";
-		$('body').scrollTop($(marks[cur]).offset().top - 20);
+		if (marks.length > 0) {
+			marks[cur].className="__regexp_search_selected";
+			$('body').scrollTop($(marks[cur]).offset().top - 20);
+		}
 	});
 
 function recurse(element, regexp) {
-	if (element.nodeName == "MARK") {
+	if (element.nodeName == "MARK" || element.nodeName == "SCRIPT" ||
+		element.nodeName == "NOSCRIPT" ||
+		element.nodeName == "STYLE" ||
+		element.nodeType == Node.COMMENT_NODE) {
 		return;
 	}
+	if (element.nodeType != Node.TEXT_NODE && !$(element).is(':visible')) {
+		return;
+	}
+
 	if (element.childNodes.length > 0) { 
 		for (var i = 0; i < element.childNodes.length; i++) {
 			recurse(element.childNodes[i], regexp);
@@ -62,7 +71,6 @@ function recurse(element, regexp) {
 
 				parent.appendChild(before);
 				parent.appendChild(mark);
-
 				marks.push(mark);
 			}
 			parent.appendChild(document.createTextNode(str.substring(pos)));
@@ -84,7 +92,11 @@ function clear() {
 }
 
 function displayCount() {
-	var num = cur + 1;
+	if (marks.length > 0) {
+		var num = cur + 1;
+	} else {
+		var num = 0;
+	}
 	var s = document.createElement('span');
 	s.id = "_regexp_search_count";
 	s.innerHTML = num + " of " + marks.length + " matches.";
