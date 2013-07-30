@@ -38,11 +38,13 @@ function recurse(element, regexp) {
 		element.nodeType == Node.COMMENT_NODE) {
 		return;
 	}
+
+	// Skip all invisible text nodes
 	if (element.nodeType != Node.TEXT_NODE && !$(element).is(':visible')) {
 		return;
 	}
 
-	if (element.childNodes.length > 0) { 
+	if (element.childNodes.length > 0) {
 		for (var i = 0; i < element.childNodes.length; i++) {
 			recurse(element.childNodes[i], regexp);
 		}
@@ -59,23 +61,24 @@ function recurse(element, regexp) {
 		var str = element.nodeValue;
 		var matches = str.match(regexp);
 		var parent = element.parentNode;
+
 		if (matches != null) {
-			parent.removeChild(element);
-			
 			var pos = 0;
+			var mark;
 			for (var i = 0; i < matches.length; i++) {
 				var index = str.indexOf(matches[i], pos);
 				var before = document.createTextNode(str.substring(pos, index));
 				pos = index + matches[i].length;
 
-				var mark = document.createElement('mark');
+				mark = document.createElement('mark');
 				mark.appendChild(document.createTextNode(matches[i]));
 
-				parent.appendChild(before);
-				parent.appendChild(mark);
+				parent.replaceChild(mark, element);
+				parent.insertBefore(before, mark);
 				marks.push(mark);
 			}
-			parent.appendChild(document.createTextNode(str.substring(pos)));
+			var after = document.createTextNode(str.substring(pos));
+			parent.insertBefore(after, mark.nextSibling);
 		}
 	}
 }
