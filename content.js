@@ -70,11 +70,20 @@ function recurse(element, regexp) {
 				var before = document.createTextNode(str.substring(pos, index));
 				pos = index + matches[i].length;
 
+				/*
+				 * We can only replace the child once, after that we insert after
+				 * the previous mark element
+				 */
+				if (element.parentNode == parent) {
+					parent.replaceChild(before, element);
+				} else {
+					parent.insertBefore(before, mark.nextSibling)
+				}
+
 				mark = document.createElement('mark');
 				mark.appendChild(document.createTextNode(matches[i]));
-
-				parent.replaceChild(mark, element);
-				parent.insertBefore(before, mark);
+				
+				parent.insertBefore(mark, before.nextSibling);
 				marks.push(mark);
 			}
 			var after = document.createTextNode(str.substring(pos));
