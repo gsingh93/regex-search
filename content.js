@@ -40,7 +40,9 @@ function recurse(element, regexp) {
 	}
 
 	// Skip all invisible text nodes
-	if (element.nodeType != Node.TEXT_NODE && !$(element).is(':visible')) {
+	disp = $(element).css('display');
+	if (element.nodeType != Node.TEXT_NODE &&
+		(disp == 'none' || disp == 'hidden')) {
 		return;
 	}
 
