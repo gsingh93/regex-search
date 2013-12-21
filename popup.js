@@ -1,6 +1,5 @@
 var prevButton  = document.getElementById("prev");
 var nextButton  = document.getElementById("next");
-var clearButton = document.getElementById("clear");
 var queryInput  = document.getElementById("query");
 
 function sendCommand(commandName, responseHandler) {
@@ -37,11 +36,6 @@ nextButton.addEventListener("click", function(event) {
         search();
     }
 });
-clearButton.addEventListener("click", function(event) {
-    sendCommand("clear");
-    setBackgroundVar("searching", false);
-    setEnabled("clear", false);
-});
 
 queryInput.addEventListener("keydown", function(event) {
     if (event.keyCode == 13) {
@@ -49,10 +43,9 @@ queryInput.addEventListener("keydown", function(event) {
     }
 });
 queryInput.addEventListener("input", function(event) {
-    if (getBackgroundVar("query") != queryInput.value) {
-        setBackgroundVar("query", queryInput.value);
-        setBackgroundVar("searching", false);
-    }
+    setBackgroundVar("query", queryInput.value);
+    setBackgroundVar("searching", false);
+    sendCommand("clear");
 
     // Remove the invalid class if it's there
     queryInput.className = '';
@@ -69,10 +62,6 @@ if (queryInput.value == "") {
     setEnabled("next", false);
 } else {
     setEnabled("next", true);
-}
-
-if (!getBackgroundVar("searching")) {
-    setEnabled("clear", false);
 }
 
 function search() {
@@ -92,7 +81,6 @@ function search() {
                                         caseInsensitive: insensitive,
                                         regexp: el.value
                                     });
-            setEnabled("clear", true);
             setBackgroundVar("searching", true);
         } else {
             el.className = 'invalid';
