@@ -27,7 +27,7 @@
         outline-style: none;
       }
 
-      input.invalid {
+      input.invalid, input.invalid:focus{
         border-color: red;
       }
 
@@ -63,6 +63,14 @@
         position:relative;
         top:1px;
       }
+      .button:disabled {
+        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
+        background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
+        filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+        background-color:#dfdfdf;
+        cursor: default;
+        top:0px;
+      }
     </style>
   </head>
   <body>
@@ -72,6 +80,7 @@
       <button class="button" id="prev">Prev</button>
       <button class="button" id="clear">Clear</button>
       <button class="button" id="next">Next</button>
+      <br>
       Case Insensitive <input type="checkbox" id="case-insensitive">
     </div>
     <script src="popup.js"></script>

@@ -24,7 +24,6 @@ chrome.runtime.onMessage.addListener(
             html.normalize();
             recurse(html, re);
             displayCount();
-            sendResponse({status: "success"});
         } else if (request.command == "clear") {
             clear();
         } else if (request.command == "prev") {
@@ -143,16 +142,16 @@ function displayCount() {
 
 function moveToNext() {
     if (cur < marks.length - 1) {
-        marks[cur++].className="";
-        marks[cur].className="__regexp_search_selected";
+        marks[cur++].className = "";
+        marks[cur].className = "__regexp_search_selected";
         updatePosText();
     }
 }
 
 function moveToPrev() {
     if (cur > 0) {
-        marks[cur--].className="";
-        marks[cur].className="__regexp_search_selected";
+        marks[cur--].className = "";
+        marks[cur].className = "__regexp_search_selected";
         updatePosText();
     }
 }
@@ -166,22 +165,19 @@ function updatePosText() {
 }
 
 function elementInViewport(el) {
-    var top = el.offsetTop;
-    var left = el.offsetLeft;
-    var width = el.offsetWidth;
+    var top    = el.offsetTop;
+    var left   = el.offsetLeft;
+    var width  = el.offsetWidth;
     var height = el.offsetHeight;
 
-    while(el.offsetParent) {
+    while (el.offsetParent) {
         el = el.offsetParent;
         top += el.offsetTop;
         left += el.offsetLeft;
     }
 
-    return (
-    top >= window.pageYOffset &&
-    left >= window.pageXOffset &&
-            (top + height) <= (window.pageYOffset + window.innerHeight) &&
-            (left + width) <= (window.pageXOffset + window.innerWidth)
-    );
+    return top >= window.pageYOffset && left >= window.pageXOffset
+        && (top + height) <= (window.pageYOffset + window.innerHeight)
+        && (left + width) <= (window.pageXOffset + window.innerWidth);
 }
 

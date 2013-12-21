@@ -23,6 +23,10 @@ function getBackgroundVar(name) {
     return chrome.extension.getBackgroundPage()[name];
 }
 
+function setEnabled(id, val) {
+    document.getElementById(id).disabled = !val;
+}
+
 prevButton.addEventListener("click", function(event) {
     sendCommand("prev");
 });
@@ -34,19 +38,42 @@ nextButton.addEventListener("click", function(event) {
     }
 });
 clearButton.addEventListener("click", function(event) {
-    sendCommand("clear", function(response) {
-        setBackgroundVar("searching", false);
-    });
+    sendCommand("clear");
+    setBackgroundVar("searching", false);
+    setEnabled("clear", false);
 });
 
 queryInput.addEventListener("keydown", function(event) {
-    setBackgroundVar("query", document.getElementById("query").value);
     if (event.keyCode == 13) {
         search();
     }
 });
+queryInput.addEventListener("input", function(event) {
+    if (getBackgroundVar("query") != queryInput.value) {
+        setBackgroundVar("query", queryInput.value);
+        setBackgroundVar("searching", false);
+    }
+
+    // Remove the invalid class if it's there
+    queryInput.className = '';
+
+    if (queryInput.value == "") {
+        setEnabled("next", false);
+    } else {
+        setEnabled("next", true);
+    }
+});
 
 queryInput.value = getBackgroundVar("query");
+if (queryInput.value == "") {
+    setEnabled("next", false);
+} else {
+    setEnabled("next", true);
+}
+
+if (!getBackgroundVar("searching")) {
+    setEnabled("clear", false);
+}
 
 function search() {
     chrome.tabs.getSelected(null, function(tab) {
@@ -64,12 +91,9 @@ function search() {
                                         command: "search",
                                         caseInsensitive: insensitive,
                                         regexp: el.value
-                                    },
-                                    function(response) {
-                                        if (response.status == "success") {
-                                            setBackgroundVar("searching", true);
-                                        }
                                     });
+            setEnabled("clear", true);
+            setBackgroundVar("searching", true);
         } else {
             el.className = 'invalid';
         }
