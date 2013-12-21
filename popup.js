@@ -44,8 +44,11 @@ queryInput.addEventListener("keydown", function(event) {
 });
 queryInput.addEventListener("input", function(event) {
     setBackgroundVar("query", queryInput.value);
-    setBackgroundVar("searching", false);
-    sendCommand("clear");
+
+    if (getBackgroundVar("searching")) {
+        setBackgroundVar("searching", false);
+        sendCommand("clear");
+    }
 
     // Remove the invalid class if it's there
     queryInput.className = '';
