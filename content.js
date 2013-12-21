@@ -141,19 +141,21 @@ function displayCount() {
 }
 
 function moveToNext() {
-    if (cur < marks.length - 1) {
-        marks[cur++].className = "";
-        marks[cur].className = "__regexp_search_selected";
-        updatePosText();
-    }
+    console.assert(cur >= 0 && cur < marks.length);
+    marks[cur++].className = "";
+    cur %= marks.length;
+    marks[cur].className = "__regexp_search_selected";
+    updatePosText();
 }
 
 function moveToPrev() {
-    if (cur > 0) {
-        marks[cur--].className = "";
-        marks[cur].className = "__regexp_search_selected";
-        updatePosText();
+    console.assert(cur >= 0 && cur < marks.length);
+    marks[cur--].className = "";
+    if (cur < 0) {
+        cur += marks.length;
     }
+    marks[cur].className = "__regexp_search_selected";
+    updatePosText();
 }
 
 function updatePosText() {
