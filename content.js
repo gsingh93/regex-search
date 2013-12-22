@@ -30,6 +30,10 @@ function setInfoSpanText(text) {
     infoSpan.innerHTML = text;
 }
 
+function makeTimeoutCall(fn, data, timeout){
+    setTimeout(function() {fn.call(null, data);}, timeout);
+}
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         log("Received command " + request.command);
@@ -40,13 +44,11 @@ chrome.runtime.onMessage.addListener(
                 log("Case insensitive enabled")
                 var flags = "gi";
             }
-            var re = new RegExp(request.regexp, flags);
-            var html = document.getElementsByTagName('body')[0];
             clear();
-            //here
-            html.normalize();
-            recurse(html, re);
-            displayCount();
+            displayInfoSpan();
+            setInfoSpanText("Searching...");
+            var re = new RegExp(request.regexp, flags);
+            makeTimeoutCall(function(re) {delayedSearch(re);}, re, 10);
         } else if (request.command == "clear") {
             clear();
         } else if (request.command == "prev") {
@@ -56,19 +58,39 @@ chrome.runtime.onMessage.addListener(
         } else {
             log("Invalid command");
         }
-        if (marks.length > 0) {
+        if (request.command != "search") {
+            if (marks.length > 0) {
+                marks[cur].className = "__regexp_search_selected";
+                if (!elementInViewport(marks[cur])) {
+                    $('body').scrollTop($(marks[cur]).offset().top - 20);
+                }
+            }
+        }
+    });
+
+function delayedSearch(re) {
+    var html = document.getElementsByTagName('body')[0];
+    html.normalize();
+    recurse(html, re);
+    displayCount();
+    if (marks.length > 0) {
             marks[cur].className = "__regexp_search_selected";
             if (!elementInViewport(marks[cur])) {
                 $('body').scrollTop($(marks[cur]).offset().top - 20);
             }
         }
-    });
+}
 
 function recurse(element, regexp) {
     if (element.nodeName == "MARK" || element.nodeName == "SCRIPT" ||
         element.nodeName == "NOSCRIPT" ||
         element.nodeName == "STYLE" ||
         element.nodeType == Node.COMMENT_NODE) {
+        return;
+    }
+
+    // Skipping infoSpan
+    if (element.id == '_regexp_search_count') {
         return;
     }
 
@@ -128,13 +150,16 @@ function recurse(element, regexp) {
 }
 
 function clear() {
-    cur = 0;
-    for (var i = 0; i < marks.length; i++) {
-        var mark = marks[i];
-        mark.parentNode.replaceChild(mark.firstChild, mark);
-    }
-    marks.length = 0;
-    removeInfoSpan();
+    setInfoSpanText("Clearing...");
+    setTimeout(function() {
+        cur = 0;
+        for (var i = 0; i < marks.length; i++) {
+            var mark = marks[i];
+            mark.parentNode.replaceChild(mark.firstChild, mark);
+        }
+        marks.length = 0;
+        removeInfoSpan();
+    }, 10);
 }
 
 function displayCount() {
