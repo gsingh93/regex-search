@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Regex Search",
-    "version": "1.5",
+    "version": "1.6",
 
     "permissions": [
         "tabs", "http://*/*"
