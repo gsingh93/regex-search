@@ -28,6 +28,26 @@
         "default_popup": "popup.html"
     },
 
+    "commands": {
+        "next": {
+            "suggested_key": {
+                "default": "Alt+Shift+N"
+            },
+            "description": "Go to the next search result"
+        },
+        "prev": {
+            "suggested_key": {
+                "default": "Alt+Shift+P"
+            },
+            "description": "Go to the previous search result"
+        },
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Alt+Shift+F"
+            }
+        }
+    },
+
     "icons": {
         "16": "images/icon16.png",
         "48": "images/icon48.png",
