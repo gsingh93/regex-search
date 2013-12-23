@@ -1,6 +1,6 @@
 var marks = new Array();
 var cur = 0;
-var logging = true;
+var logging = false;
 
 function log(message) {
     if (logging) {
