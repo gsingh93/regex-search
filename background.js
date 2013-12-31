@@ -1,6 +1,7 @@
-var query = "";
-var searching = false;
+// Map from tab ID to search state {string, bool}
+var active_tabs = {};
 
+// Show update or install pages if necessary
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason == "install") {
         chrome.tabs.create({ url: "install.html" });
@@ -9,19 +10,26 @@ chrome.runtime.onInstalled.addListener(function (details) {
     }
 });
 
+// Handle keyboard shortcuts
 var lastCalled = 0;
 chrome.commands.onCommand.addListener(function(command) {
-    // The time hack is to get around this function being called twice when the
-    // popup is open
-    var d = new Date();
-    if (searching && d.getTime() - lastCalled > 50) {
-        if (command == "next") {
-            sendCommand("next");
-        } else if (command == "prev") {
-            sendCommand("prev");
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
+        console.assert(tabs.length == 1);
+        var id = tabs[0].id;
+
+        // The time hack is to get around this function being called twice when
+        // the popup is open
+        var d = new Date();
+        if (active_tabs[id] != undefined && active_tabs[id].searching
+            && d.getTime() - lastCalled > 50) {
+            if (command == "next") {
+                sendCommand("next");
+            } else if (command == "prev") {
+                sendCommand("prev");
+            }
+            lastCalled = d.getTime();
         }
-        lastCalled = d.getTime();
-    }
+    });
 });
 
 function sendCommand(commandName, responseHandler) {
@@ -35,3 +43,13 @@ function sendCommand(commandName, responseHandler) {
         });
     })(commandName, responseHandler);
 }
+
+// Initialize state when tab is opened
+chrome.tabs.onCreated.addListener(function(tab) {
+    active_tabs[tab.id] = {query: "", searching: false};
+});
+
+// Remove state when tab is closed
+chrome.tabs.onRemoved.addListener(function(id) {
+    delete active_tabs[id];
+});

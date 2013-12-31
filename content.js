@@ -2,12 +2,7 @@ var marks = new Array();
 var cur = 0;
 var logging = false;
 
-function log(message) {
-    if (logging) {
-        console.log(message);
-    }
-}
-
+// Global variable because prototypes are hard.
 var infoSpan = document.createElement('span');
 infoSpan.id = "_regexp_search_count";
 infoSpan.style.position = 'fixed';
@@ -21,6 +16,12 @@ infoSpan.addEventListener('mouseover', function(event) {
 infoSpan.addEventListener('mouseout', function(event) {
     infoSpan.style.opacity = "1";
 });
+
+function log(message) {
+    if (logging) {
+        console.log(message);
+    }
+}
 
 function getInfoSpan() {
     return infoSpan;
@@ -48,13 +49,16 @@ chrome.runtime.onMessage.addListener(
             displayInfoSpan();
             setInfoSpanText("Searching...");
             var re = new RegExp(request.regexp, flags);
+
+            // Search needs to be delayed because InfoSpan isn't updated fast
+            // enough
             makeTimeoutCall(function(re) {delayedSearch(re);}, re, 10);
         } else if (request.command == "clear") {
             clear();
         } else if (request.command == "prev") {
-            moveToPrev();
+            move(false);
         } else if (request.command == "next") {
-            moveToNext();
+            move(true);
         } else {
             log("Invalid command");
         }
@@ -149,6 +153,7 @@ function recurse(element, regexp) {
     }
 }
 
+// Remove all matches
 function clear() {
     setInfoSpanText("Clearing...");
     setTimeout(function() {
@@ -162,6 +167,7 @@ function clear() {
     }, 10);
 }
 
+// Set the infoSpan text to the number of matches
 function displayCount() {
     if (marks.length > 0) {
         var num = cur + 1;
@@ -172,6 +178,7 @@ function displayCount() {
     displayInfoSpan();
 }
 
+// Remove the infoSpan from the screen
 function removeInfoSpan() {
     var span = getInfoSpan();
     if (span.parentNode) {
@@ -179,6 +186,7 @@ function removeInfoSpan() {
     }
 }
 
+// Show the infoSpan on the screen
 function displayInfoSpan() {
     var span = getInfoSpan();
     if (!span.parentNode) {
@@ -186,30 +194,36 @@ function displayInfoSpan() {
     }
 }
 
-function moveToNext() {
-    console.assert(cur >= 0 && cur < marks.length);
-    marks[cur++].className = "";
-    cur %= marks.length;
-    marks[cur].className = "__regexp_search_selected";
-    updatePosText();
-}
-
-function moveToPrev() {
-    console.assert(cur >= 0 && cur < marks.length);
-    marks[cur--].className = "";
-    if (cur < 0) {
-        cur += marks.length;
-    }
-    marks[cur].className = "__regexp_search_selected";
-    updatePosText();
-}
-
-function updatePosText() {
+// Move the current match
+function move(next) {
     if (marks.length > 0) {
+        console.assert(cur >= 0 && cur < marks.length);
+        marks[cur].className = "";
+        if (next) {
+            nextMatch();
+        } else {
+            prevMatch();
+        }
+        marks[cur].className = "__regexp_search_selected";
         setInfoSpanText((cur + 1) + " of " + marks.length + " matches.");
     }
 }
 
+// Move current match to the next match
+function nextMatch() {
+    cur++;
+    cur %= marks.length;
+}
+
+// Move the current match to the previous match
+function prevMatch() {
+    cur--;
+    if (cur < 0) {
+        cur += marks.length;
+    }
+}
+
+// Returns true if el is in the viewport, false otherwise
 function elementInViewport(el) {
     var top    = el.offsetTop;
     var left   = el.offsetLeft;
@@ -226,4 +240,3 @@ function elementInViewport(el) {
         && (top + height) <= (window.pageYOffset + window.innerHeight)
         && (left + width) <= (window.pageXOffset + window.innerWidth);
 }
-

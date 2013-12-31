@@ -1,74 +1,94 @@
-var prevButton  = document.getElementById("prev");
-var nextButton  = document.getElementById("next");
-var queryInput  = document.getElementById("query");
+var logging = false;
 
-function sendCommand(commandName, responseHandler) {
-    (function (commandName, responseHandler) {
-        chrome.tabs.getSelected(null, function(tab) {
-            if (responseHandler == undefined) {
-                responseHandler = null;
-            }
-            chrome.tabs.sendMessage(tab.id, {command: commandName},
-                                    responseHandler);
-        });
-    })(commandName, responseHandler);
-}
-
-function setBackgroundVar(name, val) {
-    chrome.extension.getBackgroundPage()[name] = val;
-}
-
-function getBackgroundVar(name) {
-    return chrome.extension.getBackgroundPage()[name];
-}
-
-function setEnabled(id, val) {
-    document.getElementById(id).disabled = !val;
-}
-
-prevButton.addEventListener("click", function(event) {
-    sendCommand("prev");
-});
-nextButton.addEventListener("click", function(event) {
-    if (getBackgroundVar("searching")) {
-        sendCommand("next");
-    } else {
-        search();
+function log(message) {
+    if (logging) {
+        console.log(message);
     }
-});
+}
 
-queryInput.addEventListener("keydown", function(event) {
-    if (event.keyCode == 13) {
-        search();
-    }
-});
-queryInput.addEventListener("input", function(event) {
-    setBackgroundVar("query", queryInput.value);
+chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
+    console.assert(tabs.length == 1);
 
-    if (getBackgroundVar("searching")) {
-        setBackgroundVar("searching", false);
-        sendCommand("clear");
+    var id = tabs[0].id;
+    var map = getBackgroundVar("active_tabs")[id];
+    if (map == undefined) {
+        log("ID doesn't exist. Initializing entry.")
+        map = {query: "", searching: false};
+        getBackgroundVar("active_tabs")[id] = map;
     }
 
-    // Remove the invalid class if it's there
-    queryInput.className = '';
+    var prevButton  = document.getElementById("prev");
+    var nextButton  = document.getElementById("next");
+    var queryInput  = document.getElementById("query");
 
+    function sendCommand(commandName, responseHandler) {
+        (function (commandName, responseHandler) {
+            chrome.tabs.getSelected(null, function(tab) {
+                if (responseHandler == undefined) {
+                    responseHandler = null;
+                }
+                log("Sending command " + commandName);
+                chrome.tabs.sendMessage(tab.id, {command: commandName},
+                                        responseHandler);
+            });
+        })(commandName, responseHandler);
+    }
+
+    function setBackgroundVar(name, val) {
+        chrome.extension.getBackgroundPage()[name] = val;
+    }
+
+    function getBackgroundVar(name) {
+        return chrome.extension.getBackgroundPage()[name];
+    }
+
+    function setEnabled(id, val) {
+        document.getElementById(id).disabled = !val;
+    }
+
+    prevButton.addEventListener("click", function(event) {
+        sendCommand("prev");
+    });
+    nextButton.addEventListener("click", function(event) {
+        if (map["searching"]) {
+            sendCommand("next");
+        } else {
+            search();
+        }
+    });
+
+    queryInput.addEventListener("keydown", function(event) {
+        if (event.keyCode == 13) {
+            log("Enter pressed");
+            search();
+        }
+    });
+    queryInput.addEventListener("input", function(event) {
+        map["query"] = queryInput.value;
+
+        if (map["searching"]) {
+            map["searching"] = false;
+            sendCommand("clear");
+        }
+
+        // Remove the invalid class if it's there
+        queryInput.className = '';
+
+        if (queryInput.value == "") {
+            setEnabled("next", false);
+        } else {
+            setEnabled("next", true);
+        }
+    });
+
+    queryInput.value = map["query"];
     if (queryInput.value == "") {
         setEnabled("next", false);
     } else {
         setEnabled("next", true);
     }
-});
 
-queryInput.value = getBackgroundVar("query");
-if (queryInput.value == "") {
-    setEnabled("next", false);
-} else {
-    setEnabled("next", true);
-}
-
-function search() {
-    chrome.tabs.getSelected(null, function(tab) {
+    function search() {
         var el = document.getElementById("query");
         if (validate(el.value)) {
             el.className = '';
@@ -78,26 +98,27 @@ function search() {
             } else {
                 var insensitive = false;
             }
-            chrome.tabs.sendMessage(tab.id,
+            chrome.tabs.sendMessage(id,
                                     {
                                         command: "search",
                                         caseInsensitive: insensitive,
                                         regexp: el.value
                                     });
-            setBackgroundVar("searching", true);
+            map["searching"] = true;
         } else {
+            log("Invalid regex");
             el.className = 'invalid';
         }
-    });
-}
-
-function validate(regexp) {
-    if (regexp != "") {
-        try {
-            "".match(regexp);
-            return true;
-        } catch (e) {
-        }
     }
-    return false;
-}
+
+    function validate(regexp) {
+        if (regexp != "") {
+            try {
+                "".match(regexp);
+                return true;
+            } catch (e) {
+            }
+        }
+        return false;
+    }
+});
