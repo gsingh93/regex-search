@@ -2,6 +2,9 @@ var marks = new Array();
 var cur = 0;
 var logging = false;
 
+// Notify background script that this page has just loaded
+chrome.extension.sendMessage({event: "loaded"});
+
 // Global variable because prototypes are hard.
 var infoSpan = document.createElement('span');
 infoSpan.id = "_regexp_search_count";

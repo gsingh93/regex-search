@@ -11,6 +11,9 @@ chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
 
     var id = tabs[0].id;
     var map = getBackgroundVar("active_tabs")[id];
+
+    // In most cases the map entry will already be initialized. However, there
+    // may be a few edge cases where we need to initialize it ourselves.
     if (map == undefined) {
         log("ID doesn't exist. Initializing entry.")
         map = {query: "", searching: false};

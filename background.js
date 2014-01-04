@@ -44,10 +44,20 @@ function sendCommand(commandName, responseHandler) {
     })(commandName, responseHandler);
 }
 
-// Initialize state when tab is opened
-chrome.tabs.onCreated.addListener(function(tab) {
-    active_tabs[tab.id] = {query: "", searching: false};
-});
+chrome.runtime.onMessage.addListener(
+    function(request, sender) {
+        var id = sender.tab.id;
+        // Reset the tab state whenever it is loaded/reloaded
+        if (request.event == "loaded") {
+            if (active_tabs[id] == undefined) {
+                active_tabs[id] = {query: "", searching: false};
+            } else {
+                // Don't change the query, only reset searching
+                active_tabs[id].searching = false;
+            }
+        }
+    }
+);
 
 // Remove state when tab is closed
 chrome.tabs.onRemoved.addListener(function(id) {
