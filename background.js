@@ -1,4 +1,4 @@
-// Map from tab ID to search state {string, bool}
+// Map from tab ID to search state {string, bool, bool}
 var active_tabs = {};
 
 // Show update or install pages if necessary
@@ -50,7 +50,7 @@ chrome.runtime.onMessage.addListener(
         // Reset the tab state whenever it is loaded/reloaded
         if (request.event == "loaded") {
             if (active_tabs[id] == undefined) {
-                active_tabs[id] = {query: "", searching: false};
+                active_tabs[id] = {query: "", searching: false, caseInsensitive: false};
             } else {
                 // Don't change the query, only reset searching
                 active_tabs[id].searching = false;
