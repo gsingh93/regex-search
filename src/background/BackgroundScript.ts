@@ -49,8 +49,3 @@ module BackgroundScript {
 
     init();
 }
-
-
-
-
-
