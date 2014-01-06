@@ -1,5 +1,5 @@
 /// <reference path="../d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
-/// <reference path="ContentScript.ts"/>
+/// <reference path="../ContentScript.ts"/>
 /// <reference path="TabStateManager.ts"/>
 
 module KeyboardHandler {
