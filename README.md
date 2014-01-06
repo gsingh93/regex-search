@@ -10,5 +10,5 @@ Build guide
 1. Install NodeJS: [http://nodejs.org/](http://nodejs.org/)
 2. Install Grunt:
 ```npm install -g grunt-cli```
-3. Clone this repo and start execute ```npm install``` inside the created directory, 
+3. Clone this repo and execute ```npm install``` inside the created directory, 
 4. Run ```grunt``` in order to build the extension (```build/``` is the output directory).
