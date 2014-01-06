@@ -42,6 +42,8 @@ module BackgroundScript {
             tabStates.remove(id);
         });
     }
+
+    init();
 }
 
 
