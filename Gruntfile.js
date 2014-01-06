@@ -6,13 +6,17 @@ module.exports = function(grunt) {
 	
 	grunt.initConfig({
 		ts: {
-			bg: {
+			options: {
+				sourceMap: false,
+				removeComments: true
+			},
+			background: {
 				src: bgSrc,
-				out: "<%= buildDir %>/background/background.js",
+				out: "build/background/background.js"
 			},
 			popup: {
 				src: popupSrc,
-				out: "<%= buildDir %>/popup/popup.js"
+				out: "build/popup/popup.js"
 			}
 		},
 		copy: {
@@ -22,12 +26,12 @@ module.exports = function(grunt) {
 						expand: true,
 						src: ["manifest.json", "content/*", "pages/*", "popup/popup.html"],
 						cwd: "src/",
-						dest: "<%= buildDir %>/"
+						dest: "build/"
 					},
 					{
 						expand: true,
 						src: "images/*",
-						dest: "<%= buildDir %>/"
+						dest: "build/"
 					}
 				]
 			}
@@ -36,18 +40,5 @@ module.exports = function(grunt) {
 	
 	grunt.loadNpmTasks("grunt-ts");
 	grunt.loadNpmTasks("grunt-contrib-copy");
-	grunt.registerTask("default", ["dev"]);
-	
-	function runAllTasks() {
-		grunt.task.run(["ts:bg", "ts:popup", "copy:all"]);
-	}
-	
-	grunt.registerTask('dev', 'Build dev', function() {
-		grunt.config("buildDir", "build/dev");
-		runAllTasks();
-	});
-	grunt.registerTask('release', 'Build dev', function() {
-		grunt.config("buildDir", "build/release");
-		runAllTasks();
-	});
+	grunt.registerTask("default", ["ts", "copy"]);
 };
