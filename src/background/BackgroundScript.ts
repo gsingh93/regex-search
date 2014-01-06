@@ -20,9 +20,9 @@ module BackgroundScript {
     function registerInstallationNotice() {
         chrome.runtime.onInstalled.addListener(function (details) {
             if (details.reason == "install") {
-                chrome.tabs.create({ url: "install.html" });
+                chrome.tabs.create({ url: "pages/install.html" });
             } else if (details.reason == "update") {
-                chrome.tabs.create({ url: "update.html" });
+                chrome.tabs.create({ url: "pages/update.html" });
             }
         });
     }
