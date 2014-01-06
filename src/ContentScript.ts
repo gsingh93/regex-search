@@ -1,5 +1,4 @@
 /// <reference path="d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
-/// <reference path="TabStateManager.ts"/>
 
 module ContentScript {
     export function sendCommand(commandName: string, responseHandler?: any): void {

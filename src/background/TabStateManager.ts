@@ -1,4 +1,4 @@
-/// <reference path="d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
+/// <reference path="../d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
 /// <reference path="ContentScript.ts"/>
 
 class TabStateManager {

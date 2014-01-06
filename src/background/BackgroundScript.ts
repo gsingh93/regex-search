@@ -1,10 +1,14 @@
-/// <reference path="d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
+/// <reference path="../d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
 /// <reference path="KeyboardHandler.ts"/>
 /// <reference path="TabStateManager.ts"/>
 
 module BackgroundScript {
+    var tabStates;
+    export function getTabStateManager() {
+        return tabStates;
+    }
     function init() {
-        var tabStates = new TabStateManager();
+        tabStates = new TabStateManager();
         addTabStateListeners(tabStates);
 
         KeyboardHandler.init(tabStates);
