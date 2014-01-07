@@ -1,6 +1,9 @@
+/// <reference path="../d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
+/// <reference path="../bg-interface.ts"/>
+/// <reference path="../ContentScript.ts"/>
 var logging = false;
 
-function log(message) {
+function log(message: string) {
     if (logging) {
         console.log(message);
     }
@@ -10,52 +13,31 @@ chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
     console.assert(tabs.length == 1);
 
     var id = tabs[0].id;
-    var map = getBackgroundVar("active_tabs")[id];
+    var tabStates = BackgroundInterface.getTabStateManager();
 
     // In most cases the map entry will already be initialized. However, there
     // may be a few edge cases where we need to initialize it ourselves.
-    if (map == undefined) {
+    if (!tabStates.exists(id)) {
         log("ID doesn't exist. Initializing entry.")
-        map = {query: "", searching: false, caseInsensitive: false};
-        getBackgroundVar("active_tabs")[id] = map;
+        tabStates.set(id, { query: "", searching: false, caseInsensitive: false });
     }
+    var tabState = tabStates.get(id);
 
     var prevButton  = document.getElementById("prev");
     var nextButton  = document.getElementById("next");
-    var queryInput  = document.getElementById("query");
-    var caseInsensitiveCheckbox = document.getElementById("case-insensitive");
-
-    function sendCommand(commandName, responseHandler) {
-        (function (commandName, responseHandler) {
-            chrome.tabs.getSelected(null, function(tab) {
-                if (responseHandler == undefined) {
-                    responseHandler = null;
-                }
-                log("Sending command " + commandName);
-                chrome.tabs.sendMessage(tab.id, {command: commandName},
-                                        responseHandler);
-            });
-        })(commandName, responseHandler);
-    }
-
-    function setBackgroundVar(name, val) {
-        chrome.extension.getBackgroundPage()[name] = val;
-    }
-
-    function getBackgroundVar(name) {
-        return chrome.extension.getBackgroundPage()[name];
-    }
+    var queryInput  = <HTMLInputElement> document.getElementById("query");
+    var caseInsensitiveCheckbox = <HTMLInputElement> document.getElementById("case-insensitive");
 
     function setEnabled(id, val) {
         document.getElementById(id).disabled = !val;
     }
 
     prevButton.addEventListener("click", function(event) {
-        sendCommand("prev");
+        ContentScript.sendCommand("prev");
     });
     nextButton.addEventListener("click", function(event) {
-        if (map.searching) {
-            sendCommand("next");
+        if (tabState.searching) {
+            ContentScript.sendCommand("next");
         } else {
             search();
         }
@@ -68,11 +50,11 @@ chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
         }
     });
     queryInput.addEventListener("input", function(event) {
-        map.query = queryInput.value;
+        tabState.query = queryInput.value;
 
-        if (map.searching) {
-            map.searching = false;
-            sendCommand("clear");
+        if (tabState.searching) {
+            tabState.searching = false;
+            ContentScript.sendCommand("clear");
         }
 
         // Remove the invalid class if it's there
@@ -85,7 +67,7 @@ chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
         }
     });
 
-    queryInput.value = map.query;
+    queryInput.value = tabState.query;
     if (queryInput.value == "") {
         setEnabled("next", false);
     } else {
@@ -94,16 +76,16 @@ chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
 
     caseInsensitiveCheckbox.onclick = function() {
         log("Set checkbox state to " + this.checked);
-        map.caseInsensitive = this.checked;
+        tabState.caseInsensitive = this.checked;
     }
 
-    caseInsensitiveCheckbox.checked = map.caseInsensitive;
+    caseInsensitiveCheckbox.checked = tabState.caseInsensitive;
 
     function search() {
-        var el = document.getElementById("query");
+        var el = <HTMLInputElement> document.getElementById("query");
         if (validate(el.value)) {
             el.className = '';
-            checkbox = document.getElementById("case-insensitive");
+            var checkbox = <HTMLInputElement> document.getElementById("case-insensitive");
             if (checkbox.checked) {
                 var insensitive = true;
             } else {
@@ -115,7 +97,7 @@ chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
                                         caseInsensitive: insensitive,
                                         regexp: el.value
                                     });
-            map.searching = true;
+            tabState.searching = true;
         } else {
             log("Invalid regex");
             el.className = 'invalid';

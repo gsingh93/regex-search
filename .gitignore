@@ -1,3 +1,6 @@
 TODO
 *.sh
 *.zip
+node_modules
+build
+tscommand.tmp.txt
