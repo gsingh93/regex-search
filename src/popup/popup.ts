@@ -28,14 +28,6 @@ chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
     var queryInput  = <HTMLInputElement> document.getElementById("query");
     var caseInsensitiveCheckbox = <HTMLInputElement> document.getElementById("case-insensitive");
 
-    function setBackgroundVar(name, val) {
-        chrome.extension.getBackgroundPage()[name] = val;
-    }
-
-    function getBackgroundVar(name) {
-        return chrome.extension.getBackgroundPage()[name];
-    }
-
     function setEnabled(id, val) {
         document.getElementById(id).disabled = !val;
     }
