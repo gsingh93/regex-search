@@ -1,85 +1,75 @@
 /// <reference path="../d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
 /// <reference path="../bg-interface.ts"/>
 /// <reference path="../Utils.ts"/>
-var logging = false;
 
-function log(message: string) {
-    if (logging) {
-        console.log(message);
-    }
-}
+module Popup {
+    Utils.withActiveTab(function (tab: chrome.tabs.Tab) {
+        var id = tab.id;
+        var tabStates = BackgroundInterface.getTabStateManager();
 
-Utils.withActiveTab(function (tab: chrome.tabs.Tab) {
-    var id = tab.id;
-    var tabStates = BackgroundInterface.getTabStateManager();
-
-    // In most cases the map entry will already be initialized. However, there
-    // may be a few edge cases where we need to initialize it ourselves.
-    if (!tabStates.exists(id)) {
-        log("ID doesn't exist. Initializing entry.")
-        tabStates.set(id, { query: "", searching: false, caseInsensitive: false });
-    }
-    var tabState = tabStates.get(id);
-
-    var prevButton  = document.getElementById("prev");
-    var nextButton  = document.getElementById("next");
-    var queryInput  = <HTMLInputElement> document.getElementById("query");
-    var caseInsensitiveCheckbox = <HTMLInputElement> document.getElementById("case-insensitive");
-
-    function setEnabled(id, val) {
-        document.getElementById(id).disabled = !val;
-    }
-
-    prevButton.addEventListener("click", function(event) {
-        Utils.sendCommand("prev");
-    });
-    nextButton.addEventListener("click", function(event) {
-        if (tabState.searching) {
-            Utils.sendCommand("next");
-        } else {
-            search();
-        }
-    });
-
-    queryInput.addEventListener("keydown", function(event) {
-        if (event.keyCode == 13) {
-            log("Enter pressed");
-            search();
-        }
-    });
-    queryInput.addEventListener("input", function(event) {
-        tabState.query = queryInput.value;
-
-        if (tabState.searching) {
-            tabState.searching = false;
-            Utils.sendCommand("clear");
+        // In most cases the map entry will already be initialized. However, there
+        // may be a few edge cases where we need to initialize it ourselves.
+        if (!tabStates.exists(id)) {
+            Utils.log("ID doesn't exist. Initializing entry.")
+            tabStates.resetState(id);
         }
 
-        // Remove the invalid class if it's there
-        queryInput.className = '';
+        var prevButton  = document.getElementById("prev");
+        var nextButton  = document.getElementById("next");
+        var queryInput  = <HTMLInputElement> document.getElementById("query");
+        var caseInsensitiveCheckbox = <HTMLInputElement> document.getElementById("case-insensitive");
 
-        if (queryInput.value == "") {
+        prevButton.addEventListener("click", function(event) {
+            Utils.sendCommand("prev");
+        });
+        nextButton.addEventListener("click", function(event) {
+            if (tabStates.isSearching(id)) {
+                Utils.sendCommand("next");
+            } else {
+                search(id, tabStates);
+            }
+        });
+
+        queryInput.addEventListener("keydown", function(event) {
+            if (event.keyCode == 13) {
+                Utils.log("Enter pressed");
+                search(id, tabStates);
+            }
+        });
+        queryInput.addEventListener("input", () => {
+            tabStates.set(id, "query", this.value);
+
+            if (tabStates.isSearching(id)) {
+                tabStates.set(id, "searching", false);
+                Utils.sendCommand("clear");
+            }
+
+            // Remove the invalid class if it's there
+            this.className = '';
+
+            if (this.value == "") {
+                setEnabled("next", false);
+            } else {
+                setEnabled("next", true);
+            }
+        });
+
+        this.value = tabStates.get(id, "query");
+        if (this.value == "") {
             setEnabled("next", false);
         } else {
             setEnabled("next", true);
         }
+
+        caseInsensitiveCheckbox.onclick = function() {
+            Utils.log("Set checkbox state to " + this.checked);
+            tabStates.set(id, "caseInsensitive", this.checked);
+        }
+
+        caseInsensitiveCheckbox.checked = tabStates.get(id, "caseInsensitive");
     });
 
-    queryInput.value = tabState.query;
-    if (queryInput.value == "") {
-        setEnabled("next", false);
-    } else {
-        setEnabled("next", true);
-    }
-
-    caseInsensitiveCheckbox.onclick = function() {
-        log("Set checkbox state to " + this.checked);
-        tabState.caseInsensitive = this.checked;
-    }
-
-    caseInsensitiveCheckbox.checked = tabState.caseInsensitive;
-
-    function search() {
+    function search(tabId: number, tabStates: TabStateManager) {
         var el = <HTMLInputElement> document.getElementById("query");
         if (validate(el.value)) {
             el.className = '';
@@ -89,20 +79,20 @@ Utils.withActiveTab(function (tab: chrome.tabs.Tab) {
             } else {
                 var insensitive = false;
             }
-            chrome.tabs.sendMessage(id,
+            chrome.tabs.sendMessage(tabId,
                                     {
                                         command: "search",
                                         caseInsensitive: insensitive,
                                         regexp: el.value
                                     });
-            tabState.searching = true;
+            tabStates.set(tabId, "searching", true);
         } else {
-            log("Invalid regex");
+            Utils.log("Invalid regex");
             el.className = 'invalid';
         }
     }
 
-    function validate(regexp) {
+    function validate(regexp: string): boolean {
         if (regexp != "") {
             try {
                 "".match(regexp);
@@ -112,4 +102,8 @@ Utils.withActiveTab(function (tab: chrome.tabs.Tab) {
         }
         return false;
     }
-});
+
+    function setEnabled(id: string, val: boolean) {
+        document.getElementById(id).disabled = !val;
+    }
+}

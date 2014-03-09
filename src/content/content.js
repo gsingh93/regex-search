@@ -1,4 +1,4 @@
-var marks = new Array();
+var marks = [];
 var cur = 0;
 var logging = false;
 
@@ -42,11 +42,11 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         log("Received command " + request.command);
         if (request.command == "search") {
-            log("Searching for regex: " + request.regexp)
+            log("Searching for regex: " + request.regexp);
             var flags = "g";
-            if (request.caseInsensitive == true) {
-                log("Case insensitive enabled")
-                var flags = "gi";
+            if (request.caseInsensitive === true) {
+                log("Case insensitive enabled");
+                flags = "gi";
             }
             clear();
             displayInfoSpan();
@@ -114,7 +114,7 @@ function recurse(element, regexp) {
         }
     }
 
-    if (element.nodeType == Node.TEXT_NODE && element.nodeValue.trim() != '') {
+    if (element.nodeType == Node.TEXT_NODE && element.nodeValue.trim() !== '') {
         /*
          * 1. Find all regex matches
          * 2. Loop through matches, finding their starting positions
@@ -126,7 +126,7 @@ function recurse(element, regexp) {
         var matches = str.match(regexp);
         var parent = element.parentNode;
 
-        if (matches != null) {
+        if (matches !== null) {
             var pos = 0;
             var mark;
             for (var i = 0; i < matches.length; i++) {
@@ -141,7 +141,7 @@ function recurse(element, regexp) {
                 if (element.parentNode == parent) {
                     parent.replaceChild(before, element);
                 } else {
-                    parent.insertBefore(before, mark.nextSibling)
+                    parent.insertBefore(before, mark.nextSibling);
                 }
 
                 mark = document.createElement('mark');
@@ -172,10 +172,11 @@ function clear() {
 
 // Set the infoSpan text to the number of matches
 function displayCount() {
+    var num;
     if (marks.length > 0) {
-        var num = cur + 1;
+        num = cur + 1;
     } else {
-        var num = 0;
+        num = 0;
     }
     setInfoSpanText(num + " of " + marks.length + " matches.");
     displayInfoSpan();

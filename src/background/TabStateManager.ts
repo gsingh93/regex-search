@@ -11,6 +11,14 @@ class TabStateManager {
         return typeof (this.tabStates[tabId]) !== "undefined";
     }
 
+    public resetState(tabId: number) {
+        this.set(tabId, { query: "", searching: false, caseInsensitive: false });
+    }
+
+    public isSearching(tabId: number): boolean {
+        return this.get(tabId, "searching");
+    }
+
     public set(tabId: number, tabState: TabState);
     public set(tabId: number, propName: string, propVal: any);
     public set(tabId: number, stateOrPropName: any, propVal?: any) {

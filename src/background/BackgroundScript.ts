@@ -33,7 +33,7 @@ module BackgroundScript {
             // Reset the tab state whenever it is loaded/reloaded
             if (request.event == "loaded") {
                 if (tabStates.exists(id)) {
-                    tabStates.set(id, { query: "", searching: false, caseInsensitive: false });
+                    tabStates.resetState(id);
                 } else {
                     // Don't change the query, only reset searching
                     tabStates.set(id, "searching", false);
