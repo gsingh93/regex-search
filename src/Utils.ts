@@ -1,13 +1,6 @@
 /// <reference path="d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
 
 module Utils {
-    var logging = false;
-    export function log(message: any) {
-        if (logging) {
-            console.log(message);
-        }
-    }
-
     export interface ActiveTabCallback {
         (tab: chrome.tabs.Tab) : void;
     }

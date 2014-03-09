@@ -1,6 +1,7 @@
 /// <reference path="../d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
 /// <reference path="../bg-interface.ts"/>
 /// <reference path="../Utils.ts"/>
+/// <reference path="../Log.ts"/>
 
 module Popup {
     var prevButton  = document.getElementById("prev");
@@ -16,10 +17,9 @@ module Popup {
         // may be a few edge cases where we need to initialize it ourselves,
         // like if we enable/reload the extension
         if (!tabStates.exists(id)) {
-            Utils.log("ID doesn't exist. Initializing entry.")
+            Log.warning("ID doesn't exist. Initializing entry.")
             tabStates.resetState(id);
             var tabState = tabStates.get(id);
-            Utils.log(tabState);
         }
 
         addListeners(id, tabStates);
@@ -60,7 +60,7 @@ module Popup {
 
         var queryInputKeyDown = function(event) {
             if (event.keyCode == 13) {
-                Utils.log("Enter pressed");
+                Log.info("Enter pressed");
                 search(id, tabStates);
             }
         }
@@ -80,7 +80,7 @@ module Popup {
         }
 
         var checkboxClick = function() {
-            Utils.log("Set checkbox state to " + caseInsensitiveCheckbox.checked);
+            Log.info("Set checkbox state to " + caseInsensitiveCheckbox.checked);
             tabStates.set(id, "caseInsensitive", caseInsensitiveCheckbox.checked);
         }
 
@@ -109,7 +109,7 @@ module Popup {
                                     });
             setSearching(tabId, true, tabStates);
         } else {
-            Utils.log("Invalid regex");
+            Log.info("Invalid regex");
             queryInput.className = 'invalid';
         }
     }

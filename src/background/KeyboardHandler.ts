@@ -1,5 +1,6 @@
 /// <reference path="../d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
 /// <reference path="../Utils.ts"/>
+/// <reference path="../Log.ts"/>
 /// <reference path="TabStateManager.ts"/>
 
 module KeyboardHandler {
@@ -7,8 +8,8 @@ module KeyboardHandler {
 
     export function init(tabStates: TabStateManager) {
         chrome.commands.onCommand.addListener(function (command: string) {
-            Utils.log("Received command " + command);
-            Utils.withActiveTab(function (tab: chrome.tabs.Tab) {
+            Log.info("Received command " + command);
+            Utils.withActiveTab(function(tab: chrome.tabs.Tab) {
                 var id = tab.id;
 
                 // The time hack is to get around this function being called twice when
