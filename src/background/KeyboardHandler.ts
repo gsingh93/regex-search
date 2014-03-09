@@ -3,10 +3,11 @@
 /// <reference path="TabStateManager.ts"/>
 
 module KeyboardHandler {
-    var lastCalled: number;
+    var lastCalled: number = 0;
 
     export function init(tabStates: TabStateManager) {
         chrome.commands.onCommand.addListener(function (command: string) {
+            Utils.log("Received command " + command);
             Utils.withActiveTab(function (tab: chrome.tabs.Tab) {
                 var id = tab.id;
 
