@@ -15,9 +15,10 @@ module Popup {
         var id = tab.id;
         var tabStates = BackgroundInterface.getTabStateManager();
 
-        // In most cases the map entry will already be initialized. However, there
-        // may be a few edge cases where we need to initialize it ourselves,
-        // like if we enable/reload the extension
+        // In most cases the map entry will already be initialized. However, if
+        // the user enables/reloads the extension, the tab state will not be
+        // initialized (because the content script sent the "loaded" message
+        // earlier), so we need to initialize it now.
         if (!tabStates.exists(id)) {
             Log.warning("ID doesn't exist. Initializing entry.")
             tabStates.resetState(id);
