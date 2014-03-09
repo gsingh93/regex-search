@@ -1,6 +1,6 @@
 /// <reference path="../d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
 /// <reference path="../bg-interface.ts"/>
-/// <reference path="../ContentScript.ts"/>
+/// <reference path="../Utils.ts"/>
 var logging = false;
 
 function log(message: string) {
@@ -9,10 +9,8 @@ function log(message: string) {
     }
 }
 
-chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
-    console.assert(tabs.length == 1);
-
-    var id = tabs[0].id;
+Utils.withActiveTab(function (tab: chrome.tabs.Tab) {
+    var id = tab.id;
     var tabStates = BackgroundInterface.getTabStateManager();
 
     // In most cases the map entry will already be initialized. However, there
@@ -33,11 +31,11 @@ chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
     }
 
     prevButton.addEventListener("click", function(event) {
-        ContentScript.sendCommand("prev");
+        Utils.sendCommand("prev");
     });
     nextButton.addEventListener("click", function(event) {
         if (tabState.searching) {
-            ContentScript.sendCommand("next");
+            Utils.sendCommand("next");
         } else {
             search();
         }
@@ -54,7 +52,7 @@ chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
 
         if (tabState.searching) {
             tabState.searching = false;
-            ContentScript.sendCommand("clear");
+            Utils.sendCommand("clear");
         }
 
         // Remove the invalid class if it's there
