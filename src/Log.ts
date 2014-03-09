@@ -1,5 +1,5 @@
 module Log {
-    var LOG_LEVEL: LogLevel = LogLevel.Error;
+    var LOG_LEVEL: LogLevel = LogLevel.Info;
     export enum LogLevel {
         Error, Warning, Info, Debug
     }

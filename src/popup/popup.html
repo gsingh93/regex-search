@@ -71,6 +71,11 @@
         cursor: default;
         top:0px;
       }
+
+      #chrome-store-warning {
+        color: red;
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -81,6 +86,8 @@
       <button class="button" id="next">Next</button>
       <br>
       Case Insensitive <input type="checkbox" id="case-insensitive">
+
+      <p id="chrome-store-warning">It looks like you're trying to use this extension on the Chrome store, but Google doesn't allow this. See <a target="_blank" href="https://stackoverflow.com/questions/11613371/chrome-extension-content-script-on-https-chrome-google-com-webstore">this link</a> for more details. If you believe you've received this message in error, please contact the developer.</p>
     </div>
     <script src="popup.js"></script>
     </div>

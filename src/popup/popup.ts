@@ -9,6 +9,8 @@ module Popup {
     var queryInput  = <HTMLInputElement> document.getElementById("query");
     var caseInsensitiveCheckbox = <HTMLInputElement> document.getElementById("case-insensitive");
 
+    var chromeStoreURL = "https://chrome.google.com/webstore/";
+
     Utils.withActiveTab(function(tab: chrome.tabs.Tab) {
         var id = tab.id;
         var tabStates = BackgroundInterface.getTabStateManager();
@@ -27,6 +29,11 @@ module Popup {
 
         setNextButtonState();
         setPrevButtonState(id, tabStates);
+
+        if (tab.url.indexOf(chromeStoreURL) == 0) {
+            Log.info("Chrome store detected");
+            document.getElementById("chrome-store-warning").style.display = "block";
+        }
     });
 
     function setNextButtonState() {
