@@ -4,9 +4,11 @@
 
 module BackgroundScript {
     var tabStates;
+
     export function getTabStateManager() {
         return tabStates;
     }
+
     function init() {
         tabStates = new TabStateManager();
         addTabStateListeners(tabStates);
@@ -32,10 +34,9 @@ module BackgroundScript {
             var id = sender.tab.id;
             // Reset the tab state whenever it is loaded/reloaded
             if (request.event == "loaded") {
-                if (tabStates.exists(id)) {
+                if (!tabStates.exists(id)) { // New tab
                     tabStates.resetState(id);
-                } else {
-                    // Don't change the query, only reset searching
+                } else { // Same tab, refresh or new URL
                     tabStates.set(id, "searching", false);
                 }
             }
