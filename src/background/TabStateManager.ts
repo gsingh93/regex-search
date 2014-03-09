@@ -31,7 +31,7 @@ class TabStateManager {
     }
 
     public get(tabId: number): TabState;
-    public get(tabId: number, propName: string): boolean;
+    public get(tabId: number, propName: string): any;
     public get(tabId: number, propName?: string) {
         if (typeof propName === "undefined") {
             return this.tabStates[tabId];

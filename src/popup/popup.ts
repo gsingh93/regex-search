@@ -3,6 +3,11 @@
 /// <reference path="../Utils.ts"/>
 
 module Popup {
+    var prevButton  = document.getElementById("prev");
+    var nextButton  = document.getElementById("next");
+    var queryInput  = <HTMLInputElement> document.getElementById("query");
+    var caseInsensitiveCheckbox = <HTMLInputElement> document.getElementById("case-insensitive");
+
     Utils.withActiveTab(function (tab: chrome.tabs.Tab) {
         var id = tab.id;
         var tabStates = BackgroundInterface.getTabStateManager();
@@ -15,29 +20,31 @@ module Popup {
             tabStates.resetState(id);
         }
 
-        var prevButton  = document.getElementById("prev");
-        var nextButton  = document.getElementById("next");
-        var queryInput  = <HTMLInputElement> document.getElementById("query");
-        var caseInsensitiveCheckbox = <HTMLInputElement> document.getElementById("case-insensitive");
+        addListeners(id, tabStates);
+        restoreState(id, tabStates);
+    });
 
-        prevButton.addEventListener("click", function(event) {
+    function addListeners(id: number, tabStates: TabStateManager) {
+        var prevButtonClick = function() {
             Utils.sendCommand("prev");
-        });
-        nextButton.addEventListener("click", function(event) {
+        };
+
+        var nextButtonClick = function() {
             if (tabStates.isSearching(id)) {
                 Utils.sendCommand("next");
             } else {
                 search(id, tabStates);
             }
-        });
+        };
 
-        queryInput.addEventListener("keydown", function(event) {
+        var queryInputKeyDown = function(event) {
             if (event.keyCode == 13) {
                 Utils.log("Enter pressed");
                 search(id, tabStates);
             }
-        });
-        queryInput.addEventListener("input", () => {
+        }
+
+        var queryInputInput = () => {
             tabStates.set(id, "query", this.value);
 
             if (tabStates.isSearching(id)) {
@@ -53,43 +60,46 @@ module Popup {
             } else {
                 setEnabled("next", true);
             }
-        });
+        }
 
-        this.value = tabStates.get(id, "query");
-        if (this.value == "") {
+        var checkboxClick = function() {
+            Utils.log("Set checkbox state to " + this.checked);
+            tabStates.set(id, "caseInsensitive", this.checked);
+        }
+
+        prevButton.addEventListener("click", prevButtonClick);
+        nextButton.addEventListener("click", nextButtonClick);
+        queryInput.addEventListener("keydown", queryInputKeyDown);
+        queryInput.addEventListener("input", queryInputInput);
+        caseInsensitiveCheckbox.onclick = checkboxClick;
+    }
+
+    function restoreState(tabId: number, tabStates: TabStateManager) {
+        queryInput.value = tabStates.get(tabId, "query");
+        if (queryInput.value == "") {
             setEnabled("next", false);
         } else {
             setEnabled("next", true);
         }
 
-        caseInsensitiveCheckbox.onclick = function() {
-            Utils.log("Set checkbox state to " + this.checked);
-            tabStates.set(id, "caseInsensitive", this.checked);
-        }
-
-        caseInsensitiveCheckbox.checked = tabStates.get(id, "caseInsensitive");
-    });
+        caseInsensitiveCheckbox.checked = tabStates.get(tabId, "caseInsensitive");
+    }
 
     function search(tabId: number, tabStates: TabStateManager) {
-        var el = <HTMLInputElement> document.getElementById("query");
-        if (validate(el.value)) {
-            el.className = '';
-            var checkbox = <HTMLInputElement> document.getElementById("case-insensitive");
-            if (checkbox.checked) {
-                var insensitive = true;
-            } else {
-                var insensitive = false;
-            }
+        if (validate(queryInput.value)) {
+            queryInput.className = '';
+            var insensitive = caseInsensitiveCheckbox.checked;
+
             chrome.tabs.sendMessage(tabId,
                                     {
                                         command: "search",
                                         caseInsensitive: insensitive,
-                                        regexp: el.value
+                                        regexp: queryInput.value
                                     });
             tabStates.set(tabId, "searching", true);
         } else {
             Utils.log("Invalid regex");
-            el.className = 'invalid';
+            queryInput.className = 'invalid';
         }
     }
 
