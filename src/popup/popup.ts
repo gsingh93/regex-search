@@ -24,7 +24,26 @@ module Popup {
 
         addListeners(id, tabStates);
         restoreState(id, tabStates);
+
+        setNextButtonState();
+        setPrevButtonState(id, tabStates);
     });
+
+    function setNextButtonState() {
+        if (queryInput.value == "") {
+            nextButton.disabled = true;
+        } else {
+            nextButton.disabled = false;
+        }
+    }
+
+    function setPrevButtonState(tabId: number, tabStates: TabStateManager) {
+        if (tabStates.isSearching(tabId)) {
+            prevButton.disabled = false;
+        } else {
+            prevButton.disabled = true;
+        }
+    }
 
     function addListeners(id: number, tabStates: TabStateManager) {
         var prevButtonClick = function() {
@@ -50,18 +69,14 @@ module Popup {
             tabStates.set(id, "query", queryInput.value);
 
             if (tabStates.isSearching(id)) {
-                tabStates.set(id, "searching", false);
+                setSearching(id, false, tabStates);
                 Utils.sendCommand("clear");
             }
 
             // Remove the invalid class if it's there
             queryInput.className = '';
 
-            if (queryInput.value == "") {
-                setEnabled("next", false);
-            } else {
-                setEnabled("next", true);
-            }
+            setNextButtonState();
         }
 
         var checkboxClick = function() {
@@ -78,12 +93,6 @@ module Popup {
 
     function restoreState(tabId: number, tabStates: TabStateManager) {
         queryInput.value = tabStates.get(tabId, "query");
-        if (queryInput.value == "") {
-            setEnabled("next", false);
-        } else {
-            setEnabled("next", true);
-        }
-
         caseInsensitiveCheckbox.checked = tabStates.get(tabId, "caseInsensitive");
     }
 
@@ -98,11 +107,16 @@ module Popup {
                                         caseInsensitive: insensitive,
                                         regexp: queryInput.value
                                     });
-            tabStates.set(tabId, "searching", true);
+            setSearching(tabId, true, tabStates);
         } else {
             Utils.log("Invalid regex");
             queryInput.className = 'invalid';
         }
+    }
+
+    function setSearching(tabId: number, val: boolean, tabStates: TabStateManager) {
+        tabStates.set(tabId, "searching", val);
+        setPrevButtonState(tabId, tabStates);
     }
 
     function validate(regexp: string): boolean {
@@ -114,9 +128,5 @@ module Popup {
             }
         }
         return false;
-    }
-
-    function setEnabled(id: string, val: boolean) {
-        document.getElementById(id).disabled = !val;
     }
 }
