@@ -23,9 +23,11 @@ class TabStateManager {
     public set(tabId: number, propName: string, propVal: any);
     public set(tabId: number, stateOrPropName: any, propVal?: any) {
         if (typeof propVal === "undefined") {
+            Utils.log("Set " + tabId + " to:");
+            Utils.log(stateOrPropName);
             this.tabStates[tabId] = stateOrPropName;
-        }
-        else {
+        } else {
+            Utils.log("Set " + stateOrPropName + " for " + tabId + " to " + propVal);
             this.tabStates[tabId][stateOrPropName] = propVal;
         }
     }
@@ -34,9 +36,7 @@ class TabStateManager {
     public get(tabId: number, propName: string): any;
     public get(tabId: number, propName?: string) {
         if (typeof propName === "undefined") {
-            return this.tabStates[tabId];
-        }
-        else {
+        } else {
             return this.tabStates[tabId][propName];
         }
     }

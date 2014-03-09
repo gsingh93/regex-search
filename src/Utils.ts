@@ -1,8 +1,8 @@
 /// <reference path="d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
 
 module Utils {
-    var logging = true;
-    export function log(message: string) {
+    var logging = false;
+    export function log(message: any) {
         if (logging) {
             console.log(message);
         }
@@ -14,7 +14,7 @@ module Utils {
 
     export function withActiveTab(callback: ActiveTabCallback) {
         chrome.tabs.query({ active: true, lastFocusedWindow: true },
-            function (tabs: chrome.tabs.Tab[]) {
+            function(tabs: chrome.tabs.Tab[]) {
 
             console.assert(tabs.length == 1);
             callback(tabs[0]);
@@ -22,8 +22,8 @@ module Utils {
     }
 
     export function sendCommand(commandName: string, responseHandler?: any): void {
-        (function (commandName, responseHandler) {
-            withActiveTab(function (tab: chrome.tabs.Tab) {
+        (function(commandName, responseHandler) {
+            withActiveTab(function(tab: chrome.tabs.Tab) {
                 if (typeof responseHandler === "undefined") {
                     responseHandler = null;
                 }

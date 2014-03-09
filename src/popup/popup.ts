@@ -8,7 +8,7 @@ module Popup {
     var queryInput  = <HTMLInputElement> document.getElementById("query");
     var caseInsensitiveCheckbox = <HTMLInputElement> document.getElementById("case-insensitive");
 
-    Utils.withActiveTab(function (tab: chrome.tabs.Tab) {
+    Utils.withActiveTab(function(tab: chrome.tabs.Tab) {
         var id = tab.id;
         var tabStates = BackgroundInterface.getTabStateManager();
 
@@ -18,6 +18,8 @@ module Popup {
         if (!tabStates.exists(id)) {
             Utils.log("ID doesn't exist. Initializing entry.")
             tabStates.resetState(id);
+            var tabState = tabStates.get(id);
+            Utils.log(tabState);
         }
 
         addListeners(id, tabStates);
@@ -44,8 +46,8 @@ module Popup {
             }
         }
 
-        var queryInputInput = () => {
-            tabStates.set(id, "query", this.value);
+        var queryInputInput = function() {
+            tabStates.set(id, "query", queryInput.value);
 
             if (tabStates.isSearching(id)) {
                 tabStates.set(id, "searching", false);
@@ -53,9 +55,9 @@ module Popup {
             }
 
             // Remove the invalid class if it's there
-            this.className = '';
+            queryInput.className = '';
 
-            if (this.value == "") {
+            if (queryInput.value == "") {
                 setEnabled("next", false);
             } else {
                 setEnabled("next", true);
@@ -63,8 +65,8 @@ module Popup {
         }
 
         var checkboxClick = function() {
-            Utils.log("Set checkbox state to " + this.checked);
-            tabStates.set(id, "caseInsensitive", this.checked);
+            Utils.log("Set checkbox state to " + caseInsensitiveCheckbox.checked);
+            tabStates.set(id, "caseInsensitive", caseInsensitiveCheckbox.checked);
         }
 
         prevButton.addEventListener("click", prevButtonClick);
