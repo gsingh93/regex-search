@@ -12,7 +12,8 @@ class TabStateManager {
     }
 
     public resetState(tabId: number) {
-        this.set(tabId, { query: "", searching: false, caseInsensitive: false });
+        var caseInsensitiveVal = localStorage["caseInsensitive"] == "true";
+        this.set(tabId, { query: "", searching: false, caseInsensitive: caseInsensitiveVal });
     }
 
     public isSearching(tabId: number): boolean {
@@ -36,6 +37,7 @@ class TabStateManager {
     public get(tabId: number, propName: string): any;
     public get(tabId: number, propName?: string) {
         if (typeof propName === "undefined") {
+            return this.tabStates[tabId];
         } else {
             return this.tabStates[tabId][propName];
         }
