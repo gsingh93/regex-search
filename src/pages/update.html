@@ -4,20 +4,19 @@
     <title>Regex Search Updated</title>
   </head>
   <body>
-    <h1>Regex Search 1.6</h1>
+    <h1>Regex Search 1.7</h1>
     <b>Updates:</b>
     <ul>
-        <li>Search and Clear buttons have been removed. Search with the Next button, and clear by modifying the regex.</li>
-        <li>Next button is greyed out when not applicable, just as requested.</li>
-        <li>Next and Prev buttons now wrap around.</li>
-        <li>You can open the extension by typing Alt+Shift+F. You can go to the next and previous search results by typing Alt+Shift+N and Alt+Shift+P, respectively. These shortcuts can be configured by going to the bottom of the extensions page and clicking "Keyboard Shortcuts"</li>
-        <li>You will now see "Searching..." in the upper right corner while a search is running so you know that the extension is working</li>
+        <li>Most of the code base has been converted to TypeScript with the help of <a href="https://github.com/ComFreek">ComFreek</a></li>
+        <li>Fixed a bug where search doesn't work when changing to a different page.</li>
+        <li>Added an options page where you can set whether you want case insensitive to be on or off by default.</li>
     </ul>
     <b>Notes:</b>
     <ul>
+        <li>You can open the extension by typing Alt+Shift+F. You can go to the next and previous search results by typing Alt+Shift+N and Alt+Shift+P, respectively. These shortcuts can be configured by going to the bottom of the extensions page and clicking "Keyboard Shortcuts"</li>
         <li>This extension uses the JavaScript regex engine. I create a regular expression using 'new RegExp(regexp, flags)', where flags are currently either 'g' or 'gi'.</li>
         <li>This extension is open source and the code can be found <a href="https://github.com/gsingh93/regex-search">here</a>. I'd appreciate any help, whether it's adding new features, fixing bugs, or making the extension look better (including this update page).</li>
-        <li>This update probably introduced a couple of bugs. If you find any, let me know <a href="https://github.com/gsingh93/regex-search/issues">here</a>.
+        <li>This update probably introduced a couple of bugs. If you find any, let me know <a href="https://github.com/gsingh93/regex-search/issues">here</a>.</li>
         <li>If you like this extension, please review it in the <a href="https://chrome.google.com/webstore/detail/regex-search/bcdabfmndggphffkchfdcekcokmbnkjl/reviews">Chrome store</a></li>
     </ul>
     <b>Upcoming Features:</b>

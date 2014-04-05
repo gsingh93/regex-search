@@ -240,7 +240,7 @@ function elementInViewport(el) {
         left += el.offsetLeft;
     }
 
-    return top >= window.pageYOffset && left >= window.pageXOffset
-        && (top + height) <= (window.pageYOffset + window.innerHeight)
-        && (left + width) <= (window.pageXOffset + window.innerWidth);
+    return top >= window.pageYOffset && left >= window.pageXOffset &&
+        (top + height) <= (window.pageYOffset + window.innerHeight) &&
+        (left + width) <= (window.pageXOffset + window.innerWidth);
 }
