@@ -1,16 +1,19 @@
+/// <reference path="../d.ts/DefinitelyTyped/chrome/chrome.d.ts"/>
+/// <reference path="../d.ts/DefinitelyTyped/jquery/jquery.d.ts"/>
+
 var marks = [];
 var cur = 0;
 var logging = false;
 
 // Notify background script that this page has just loaded
-chrome.extension.sendMessage({event: "loaded"});
+chrome.runtime.sendMessage({event: "loaded"});
 
 // Global variable because prototypes are hard.
 var infoSpan = document.createElement('span');
 infoSpan.id = "_regexp_search_count";
 infoSpan.style.position = 'fixed';
-infoSpan.style.top = 0;
-infoSpan.style.left = 0;
+infoSpan.style.top = '0';
+infoSpan.style.left = '0';
 infoSpan.style.padding = '8px';
 infoSpan.style.background = 'rgba(255, 255, 0, 0.5)';
 infoSpan.addEventListener('mouseover', function(event) {
@@ -102,7 +105,7 @@ function recurse(element, regexp) {
     }
 
     // Skip all invisible text nodes
-    disp = $(element).css('display');
+    var disp = $(element).css('display');
     if (element.nodeType != Node.TEXT_NODE &&
         (disp == 'none' || disp == 'hidden')) {
         return;
