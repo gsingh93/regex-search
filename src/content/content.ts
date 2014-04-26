@@ -13,13 +13,8 @@ module Content {
     class InfoSpan {
         private span = document.createElement('span');
 
-        public InfoSpan() {
-            this.span.id = "_regexp_search_count";
-            this.span.style.position = 'fixed';
-            this.span.style.top = '0';
-            this.span.style.left = '0';
-            this.span.style.padding = '8px';
-            this.span.style.background = 'rgba(255, 255, 0, 0.5)';
+        public constructor() {
+            this.span.className = "__regexp_search_count";
 
             this.span.addEventListener('mouseover', function(event) {
                 this.span.style.opacity = "0";

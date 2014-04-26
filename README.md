@@ -5,6 +5,8 @@ This is a chrome extension written in [TypeScript](http://www.typescriptlang.org
 
 You can download the extension here: https://chrome.google.com/webstore/detail/bcdabfmndggphffkchfdcekcokmbnkjl
 
+Pull requests are welcome, just base your changes on the dev branch instead of master, as master is only updated on every release and is often behind the dev branch.
+
 Necessary build tools
 ======================
 - NodeJS: [http://nodejs.org/](http://nodejs.org/)
