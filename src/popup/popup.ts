@@ -90,6 +90,11 @@ module Popup {
         var checkboxClick = function() {
             Log.info("Set checkbox state to " + caseInsensitiveCheckbox.checked);
             tabStates.set(id, "caseInsensitive", caseInsensitiveCheckbox.checked);
+
+            if (tabStates.isSearching(id)) {
+                setSearching(id, false, tabStates);
+                Utils.sendCommand("clear");
+            }
         }
 
         prevButton.addEventListener("click", prevButtonClick);
