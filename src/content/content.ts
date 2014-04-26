@@ -16,10 +16,10 @@ module Content {
         public constructor() {
             this.span.className = "__regexp_search_count";
 
-            this.span.addEventListener('mouseover', function(event) {
+            this.span.addEventListener('mouseover', (event) => {
                 this.span.style.opacity = "0";
             });
-            this.span.addEventListener('mouseout', function(event) {
+            this.span.addEventListener('mouseout', (event) => {
                 this.span.style.opacity = "1";
             });
         }
