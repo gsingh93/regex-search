@@ -45,10 +45,22 @@ module.exports = function(grunt) {
                     }
                 ]
             }
+        },
+        compress: {
+            main: {
+                options: {
+                    archive: 'regex-search.zip',
+                    mode: 'zip'
+                },
+                files: [
+                    { src: 'build/**' }
+                ]
+            }
         }
     });
 
     grunt.loadNpmTasks("grunt-ts");
     grunt.loadNpmTasks("grunt-contrib-copy");
+    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.registerTask("default", ["ts", "copy"]);
 };
