@@ -53,7 +53,7 @@ module.exports = function(grunt) {
                     mode: 'zip'
                 },
                 files: [
-                    { src: 'build/**' }
+                    { expand: true, cwd: 'build/', src: '**' }
                 ]
             }
         }
@@ -63,4 +63,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.registerTask("default", ["ts", "copy"]);
+    grunt.registerTask("release", ["ts", "copy", "compress"]);
 };
