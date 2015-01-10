@@ -69,7 +69,15 @@ module Popup {
         var queryInputKeyDown = function(event) {
             if (event.keyCode == 13) {
                 Log.info("Enter pressed");
-                search(id, tabStates);
+                if (tabStates.isSearching(id)) {
+                    if (event.shiftKey) {
+                        prevButtonClick();
+                    } else {
+                        nextButtonClick();
+                    }
+                } else {
+                    search(id, tabStates);
+                }
             }
         }
 
