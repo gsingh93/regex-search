@@ -78,6 +78,10 @@ module Popup {
                 } else {
                     search(id, tabStates);
                 }
+            } else if (event.keyCode == 27) {
+                Log.info("Esc pressed");
+                setSearching(id, false, tabStates);
+                Utils.sendCommand("clear");
             }
         }
 
