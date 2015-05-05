@@ -118,10 +118,11 @@ module Content {
         }
 
         // Skip all invisible text nodes
-        var disp = $(element).css('display');
-        if (element.nodeType != Node.TEXT_NODE &&
-            (disp == 'none' || disp == 'hidden')) {
-            return;
+        if (element.nodeType != Node.TEXT_NODE) {
+            var disp = $(element).css('display');
+            if (disp == 'none' || disp == 'hidden') {
+                return;
+            }
         }
 
         // If the current node has children, recurse to the bottom
