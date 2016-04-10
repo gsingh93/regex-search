@@ -19,10 +19,15 @@ Optional build tools
 
 Build guide
 ============
-1. Clone this repo and execute ```npm install``` inside the created directory, 
+1. Clone this repo and execute ```npm install``` inside the created directory,
 2. Run ```grunt``` in order to build the extension (```build/``` is the output directory).
 
 Contributers
 ============
 
 Thanks to [ComFreek](https://github.com/ComFreek) for converting a large portion of the code base to TypeScript.
+
+License
+=======
+
+[MIT](https://github.com/gsingh93/regex-search/blob/master/LICENSE.txt)
