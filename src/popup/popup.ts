@@ -111,6 +111,8 @@ module Popup {
         queryInput.addEventListener("keydown", queryInputKeyDown);
         queryInput.addEventListener("input", queryInputInput);
         caseInsensitiveCheckbox.onclick = checkboxClick;
+
+		setInterval(function(){Utils.sendCommand("ping")}, 300)
     }
 
     function restoreState(tabId: number, tabStates: TabStateManager) {
