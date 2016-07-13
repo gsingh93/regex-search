@@ -49,6 +49,12 @@ module Content {
         setTimeout(function() {fn.call(null, data);}, timeout);
     }
 
+	var cleanupMonitor = null; function startCleanupMonitor() {
+		cleanupMonitor = setTimeout(function() {clear()}, 500)
+	} ; function stopCleanupMonitor(afterStop) { if (cleanupMonitor != null)
+		{ clearTimeout(cleanupMonitor); afterStop();}
+	}
+
     chrome.runtime.onMessage.addListener(
         function(request, sender, sendResponse) {
             Log.debug("Received command " + request.command);
@@ -60,6 +66,7 @@ module Content {
                     flags = "gi";
                 }
                 clear();
+				startCleanupMonitor();
                 infoSpan.add();
                 infoSpan.setText("Searching...");
                 var re = new RegExp(request.regexp, flags);
@@ -73,6 +80,8 @@ module Content {
                 move(false);
             } else if (request.command == "next") {
                 move(true);
+			} else if (request.command == "ping") {
+				stopCleanupMonitor(() => startCleanupMonitor()); // restart the monitor
             } else {
                 Log.debug("Invalid command");
             }
@@ -177,6 +186,7 @@ module Content {
     // Remove all matches
     function clear(): void {
         infoSpan.setText("Clearing...");
+		stopCleanupMonitor(() => cleanupMonitor = null)
         setTimeout(function() {
             cur = 0;
             for (var i = 0; i < marks.length; i++) {

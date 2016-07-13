@@ -78,20 +78,20 @@ module Popup {
                 } else {
                     search(id, tabStates);
                 }
-            } else if (event.keyCode == 27) {
-                Log.info("Esc pressed");
-                setSearching(id, false, tabStates);
-                Utils.sendCommand("clear");
             }
         }
 
-        var queryInputInput = function() {
-            tabStates.set(id, "query", queryInput.value);
-
+        function clear() {
             if (tabStates.isSearching(id)) {
                 setSearching(id, false, tabStates);
                 Utils.sendCommand("clear");
             }
+		}
+
+        var queryInputInput = function() {
+            tabStates.set(id, "query", queryInput.value);
+
+            clear();
 
             // Remove the invalid class if it's there
             queryInput.className = '';
@@ -103,10 +103,7 @@ module Popup {
             Log.info("Set checkbox state to " + caseInsensitiveCheckbox.checked);
             tabStates.set(id, "caseInsensitive", caseInsensitiveCheckbox.checked);
 
-            if (tabStates.isSearching(id)) {
-                setSearching(id, false, tabStates);
-                Utils.sendCommand("clear");
-            }
+            clear();
         }
 
         prevButton.addEventListener("click", prevButtonClick);
@@ -114,6 +111,8 @@ module Popup {
         queryInput.addEventListener("keydown", queryInputKeyDown);
         queryInput.addEventListener("input", queryInputInput);
         caseInsensitiveCheckbox.onclick = checkboxClick;
+
+		setInterval(function(){Utils.sendCommand("ping")}, 300)
     }
 
     function restoreState(tabId: number, tabStates: TabStateManager) {
