@@ -86,7 +86,7 @@ module Content {
             }
         });
 
-    function delayedSearch(re: string): void {
+    function delayedSearch(re: RegExp): void {
         var html = document.getElementsByTagName('body')[0];
         html.normalize();
 
@@ -104,7 +104,7 @@ module Content {
         }
     }
 
-    function recurse(element: HTMLElement, regexp: string): void {
+    function recurse(element: HTMLElement, regexp: RegExp): void {
         if (element.nodeName == "MARK" || element.nodeName == "SCRIPT" ||
             element.nodeName == "NOSCRIPT" ||
             element.nodeName == "STYLE" ||
@@ -141,33 +141,33 @@ module Content {
              * 5. After loop is finished, add remainder as text node
              */
             var str = element.nodeValue;
-            var matches = str.match(regexp);
             var parent = element.parentNode;
 
-            if (matches !== null) {
-                var pos = 0;
-                var mark;
-                for (var i = 0; i < matches.length; i++) {
-                    var index = str.indexOf(matches[i], pos);
-                    var before = document.createTextNode(str.substring(pos, index));
-                    pos = index + matches[i].length;
+            var mark;
+            var match;
+            var pos = 0;
 
-                    /*
-                     * We can only replace the child once, after that we insert after
-                     * the previous mark element
-                     */
-                    if (element.parentNode == parent) {
-                        parent.replaceChild(before, element);
-                    } else {
-                        parent.insertBefore(before, mark.nextSibling);
-                    }
+            while ((match = regexp.exec(str)) !== null) {
+                var index = match.index;
+                var before = document.createTextNode(str.substring(pos, index));
+                pos = index + match[0].length;
 
-                    mark = document.createElement('mark');
-                    mark.appendChild(document.createTextNode(matches[i]));
-
-                    parent.insertBefore(mark, before.nextSibling);
-                    marks.push(mark);
+                /*
+                    * We can only replace the child once, after that we insert after
+                    * the previous mark element
+                    */
+                if (element.parentNode == parent) {
+                    parent.replaceChild(before, element);
+                } else {
+                    parent.insertBefore(before, mark.nextSibling);
                 }
+
+                mark = document.createElement('mark');
+                mark.appendChild(document.createTextNode(match));
+
+                parent.insertBefore(mark, before.nextSibling);
+                marks.push(mark);
+
                 var after = document.createTextNode(str.substring(pos));
                 parent.insertBefore(after, mark.nextSibling);
             }
